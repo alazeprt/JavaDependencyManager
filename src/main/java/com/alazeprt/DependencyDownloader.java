@@ -118,6 +118,9 @@ public class DependencyDownloader {
             outputFolder += "/";
         }
         for(DependencyDownloader dependencyDownloader1 : list) {
+            if(new File(outputFolder + dependencyDownloader1.getDependency().split(":")[1] + "-" + dependencyDownloader1.getDependency().split(":")[2] + ".jar").exists()) {
+                continue;
+            }
             String fileUrl = dependencyDownloader1.parseDependency();
             fileUrl += "/" + dependencyDownloader1.getDependency().split(":")[1] + "-" + dependencyDownloader1.getDependency().split(":")[2] + ".jar";
             System.out.println("Downloading " + dependencyDownloader1.getDependency().split(":")[1] + "-" + dependencyDownloader1.getDependency().split(":")[2] + ".jar");
@@ -243,15 +246,5 @@ public class DependencyDownloader {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        List<DependencyDownloader> list = new ArrayList<>();
-        list.add(new DependencyDownloader("org.apache.logging.log4j:log4j-core:2.20.0"));
-        list.addAll(getDependencies(list));
-        for(DependencyDownloader d : list) {
-            System.out.println(d.getDependency());
-        }
-        downloadAll(list, "output", 8);
     }
 }

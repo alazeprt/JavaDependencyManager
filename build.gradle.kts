@@ -1,11 +1,10 @@
 plugins {
     id("java")
-    // shadow
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "com.alazeprt"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
