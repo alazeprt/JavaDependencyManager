@@ -43,3 +43,6 @@ bin/
 /.idea/
 /output/
 /logs/myapp.log
+/src/main/java/com/alazeprt/Test.java
+/gradle.properties
+/src/main/resources/
