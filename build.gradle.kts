@@ -22,6 +22,10 @@ java {
     withJavadocJar()
 }
 
+tasks.javadoc {
+    exclude("/com/alazeprt/Test.java")
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {

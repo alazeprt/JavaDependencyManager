@@ -8,7 +8,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * @author alazeprt
+ * Dependency Downloader class
+ */
 public class DependencyDownloader {
+    /** Download all dependencies in the list to the specified folder based on the specified number of threads
+     * @param list All dependencies that need to be downloaded
+     * @param outputFolder Location of dependency downloads
+     * @param threads How many threads do each dependency need to be downloaded in
+     * @throws IOException When unable to connect to the download link of the dependency
+     */
     public static void downloadAll(List<Dependency> list, String outputFolder, int threads) throws IOException {
         File folder = new File(outputFolder);
         if(!folder.exists()) {
@@ -28,6 +38,7 @@ public class DependencyDownloader {
         }
     }
 
+    /** Download the specified dependencies to the specified folder based on the specified number of threads */
     private static void downloadFiles(String fileUrl, String outputFilePath, int numThreads) throws IOException {
         URL url = new URL(fileUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -55,6 +66,7 @@ public class DependencyDownloader {
 
 
 
+    /** Multi threaded download class */
     private static class DownloadThread implements Runnable {
         private final String fileUrl;
         private final int startByte;
