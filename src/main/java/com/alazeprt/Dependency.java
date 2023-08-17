@@ -16,53 +16,64 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Represents a Maven dependency and provides methods for retrieving sub-dependencies.
+ * Also provides methods for parsing dependency information and obtaining URLs.
+ *
  * @author alazeprt
- * The Dependency class
  */
 public class Dependency {
     private final String dependency;
     private final String centralUrl;
 
     /**
-     * Initialize a dependency
-     * @param dependency Dependency shortening name
+     * Initializes a dependency with default central URL.
+     *
+     * @param dependency Shortening name of the dependency
      */
     public Dependency(String dependency) {
         this.dependency = dependency;
         this.centralUrl = "https://repo.maven.apache.org/maven2/";
     }
 
-    /** Initialize a dependency with other central url
-     * @param dependency Dependency shortening name
-     * @param centralUrl Link to the center where the dependency is located
+    /**
+     * Initializes a dependency with a custom central URL.
+     *
+     * @param dependency Shortening name of the dependency
+     * @param centralUrl Link to the central repository where the dependency is located
      */
     public Dependency(String dependency, String centralUrl) {
         this.dependency = dependency;
-        if(!centralUrl.endsWith("/")) {
+        if (!centralUrl.endsWith("/")) {
             centralUrl += "/";
         }
         this.centralUrl = centralUrl;
     }
 
-    /** Initialize a dependency via groupId, artifactId and version
-     * @param groupId groupId of the dependency
-     * @param artifactId artifactId of the dependency
-     * @param version version of the dependency
+    /**
+     * Initializes a dependency using groupId, artifactId, and version.
+     *
+     * @param groupId    GroupId of the dependency
+     * @param artifactId ArtifactId of the dependency
+     * @param version    Version of the dependency
      */
     public Dependency(String groupId, String artifactId, String version) {
         this.dependency = groupId + ":" + artifactId + ":" + version;
         this.centralUrl = "https://repo.maven.apache.org/maven2/";
     }
 
-    /** Obtain the complete dependency string
+    /**
+     * Gets the shortening name of the dependency.
+     *
      * @return Dependency shortening name
      */
     public String getDependency() {
         return dependency;
     }
 
-    /** Obtain the URL of the dependency based on the dependency and the central URL
-     * @return The URL where the dependency is located
+    /**
+     * Parses and constructs the URL of the dependency.
+     *
+     * @return URL where the dependency is located
      */
     public String parseDependency() {
         String[] strings = dependency.split(":");
@@ -70,13 +81,7 @@ public class Dependency {
         return centralUrl + packageUrl + "/" + strings[1] + "/" + strings[2];
     }
 
-    /** Retrieve all child dependencies of this dependency through recursion
-     * @param list All dependent items that require recursion
-     * @return All sub dependencies that need to be downloaded (including itself)
-     * @throws IOException If unable to connect to the dependency's URL
-     * @throws XmlPullParserException If the XML file of the dependency cannot be parsed
-     */
-    public List<Dependency> getSubDependencies(List<Dependency> list) throws IOException, XmlPullParserException {
+    private List<Dependency> getSubDependencies(List<Dependency> list) throws IOException, XmlPullParserException {
         List<Dependency> dependencies = new ArrayList<>();
         for (Dependency dependency : list) {
             if(dependency.getDependency().split(":")[1].equals("junit") || dependency.getDependency().split(":")[1].equals("junit-jupiter-api")) {
@@ -127,6 +132,19 @@ public class Dependency {
         }
         dependencies.addAll(list);
         return dependencies;
+    }
+
+    /**
+     * Recursively retrieves all sub-dependencies of this dependency.
+     *
+     * @return List of all sub-dependencies that need to be downloaded (including itself)
+     * @throws IOException            If unable to connect to the dependency's URL
+     * @throws XmlPullParserException If the XML file of the dependency cannot be parsed
+     */
+    public List<Dependency> getSubDependencies() throws XmlPullParserException, IOException {
+        List<Dependency> list = new ArrayList<>();
+        list.add(this);
+        return getSubDependencies(list);
     }
 
     private String getSameVersion(List<Dependency> subDependencies, String groupId, String artifactId) throws IOException {
@@ -193,20 +211,7 @@ public class Dependency {
         if(response.isEmpty()) {
             return false;
         } else {
-            if(response.toString().contains(version)) {
-                return true;
-            } else {
-                return false;
-            }
+            return response.toString().contains(version);
         }
-    }
-
-    /** Convert a single dependency to a list containing a single dependency
-     * @return A list containing this dependency
-     */
-    public List<Dependency> toThisList() {
-        List<Dependency> list = new ArrayList<>();
-        list.add(this);
-        return list;
     }
 }

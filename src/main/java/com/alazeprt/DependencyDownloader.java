@@ -9,15 +9,19 @@ import java.net.URL;
 import java.util.List;
 
 /**
+ * Utility class for downloading dependencies using multiple threads.
+ * This class provides methods to download dependencies to a specified folder.
+ *
  * @author alazeprt
- * Dependency Downloader class
  */
 public class DependencyDownloader {
-    /** Download all dependencies in the list to the specified folder based on the specified number of threads
-     * @param list All dependencies that need to be downloaded
-     * @param outputFolder Location of dependency downloads
-     * @param threads How many threads do each dependency need to be downloaded in
-     * @throws IOException When unable to connect to the download link of the dependency
+    /**
+     * Download all dependencies in the list to the specified folder based on the specified number of threads.
+     *
+     * @param list         All dependencies that need to be downloaded.
+     * @param outputFolder Location of dependency downloads.
+     * @param threads      How many threads to use for downloading each dependency.
+     * @throws IOException When unable to connect to the download link of the dependency.
      */
     public static void downloadAll(List<Dependency> list, String outputFolder, int threads) throws IOException {
         File folder = new File(outputFolder);
@@ -38,7 +42,14 @@ public class DependencyDownloader {
         }
     }
 
-    /** Download the specified dependencies to the specified folder based on the specified number of threads */
+    /**
+     * Download the specified file from the given URL using multiple threads.
+     *
+     * @param fileUrl       The URL of the file to download.
+     * @param outputFilePath The path where the downloaded file will be saved.
+     * @param numThreads    The number of threads to use for downloading.
+     * @throws IOException When an IO exception occurs during the download process.
+     */
     private static void downloadFiles(String fileUrl, String outputFilePath, int numThreads) throws IOException {
         URL url = new URL(fileUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -66,7 +77,9 @@ public class DependencyDownloader {
 
 
 
-    /** Multi threaded download class */
+    /**
+     * A class representing a thread for multi-threaded downloading.
+     */
     private static class DownloadThread implements Runnable {
         private final String fileUrl;
         private final int startByte;

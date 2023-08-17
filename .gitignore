@@ -46,3 +46,4 @@ bin/
 /src/main/java/com/alazeprt/Test.java
 /gradle.properties
 /src/main/resources/
+/logs/

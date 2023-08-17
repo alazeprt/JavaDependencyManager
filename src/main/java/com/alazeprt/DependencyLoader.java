@@ -7,15 +7,36 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 /**
  * Utility class for loading classes, constructing objects, and invoking methods with external dependencies.
+ *
+ * @author alazeprt
  */
 public class DependencyLoader {
     private URLClassLoader classLoader;
 
     /**
      * Creates a class loader based on the specified file.
+     *
+     * @param libPath The path to the directory containing external dependencies.
+     * @param list    List of Dependency instances representing external dependencies.
+     * @throws MalformedURLException If the provided URL is malformed.
+     */
+    public DependencyLoader(String libPath, List<Dependency> list) throws MalformedURLException {
+        if(!libPath.endsWith("/") || !libPath.endsWith("\\")) {
+            libPath += "\\";
+        }
+        URL[] urls = new URL[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            urls[i] = new File(libPath + list.get(i).getDependency().split(":")[1] + "-" + list.get(i).getDependency().split(":")[2] + ".jar").toURI().toURL();
+        }
+        this.classLoader = new URLClassLoader(urls);
+    }
+
+    /**
+     * Creates a class loader based on the specified directory.
      *
      * @param libPath The path to the directory containing external dependencies.
      * @throws MalformedURLException If the provided URL is malformed.
@@ -32,9 +53,11 @@ public class DependencyLoader {
      * @throws ClassNotFoundException    If the class is not found.
      * @throws InstantiationException    If an instance of the class cannot be created.
      * @throws IllegalAccessException    If access to the class or its constructor is denied.
+     * @throws NoSuchMethodException     If the constructor with no parameters is not found.
+     * @throws InvocationTargetException If the constructor throws an exception.
      */
-    public Object construct(String classname) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        return classLoader.loadClass(classname).newInstance();
+    public DependencyClass construct(String classname) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        return new DependencyClass(classLoader.loadClass(classname).getDeclaredConstructor().newInstance());
     }
 
     /**
@@ -63,14 +86,14 @@ public class DependencyLoader {
      * @throws IllegalAccessException    If access to the class or its constructor is denied.
      * @throws InvocationTargetException If the constructor throws an exception.
      */
-    public Object construct(String className, Object... args) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public DependencyClass construct(String className, Object... args) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> targetClass = classLoader.loadClass(className);
         Class<?>[] parameterTypes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
             parameterTypes[i] = args[i].getClass();
         }
         Constructor<?> constructor = targetClass.getConstructor(parameterTypes);
-        return constructor.newInstance(args);
+        return new DependencyClass(constructor.newInstance(args));
     }
 
     /**
@@ -85,37 +108,10 @@ public class DependencyLoader {
     }
 
     /**
-     * Invokes an instance method on the specified object.
-     *
-     * @param targetObject The object on which to invoke the method.
-     * @param methodName   The name of the method to invoke.
-     * @param returnType   The expected return type of the method.
-     * @param args         The arguments to pass to the method.
-     * @return The result of invoking the method.
-     * @throws NoSuchMethodException     If the method with the specified name and parameter types is not found.
-     * @throws InvocationTargetException If the method throws an exception.
-     * @throws IllegalAccessException    If access to the method is denied.
-     */
-    public Object runMethod(Object targetObject, String methodName, Class<?> returnType, Object... args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Class<?> targetClass = targetObject.getClass();
-        Class<?>[] parameterTypes = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
-        Method method = targetClass.getMethod(methodName, parameterTypes);
-        Object result = method.invoke(targetObject, args);
-        if (returnType.equals(Void.TYPE)) {
-            return null;
-        }
-        return returnType.cast(result);
-    }
-
-    /**
      * Invokes a static method on the specified class.
      *
      * @param className  The fully qualified class name containing the static method.
      * @param methodName The name of the static method to invoke.
-     * @param returnType The expected return type of the method.
      * @param args       The arguments to pass to the method.
      * @return The result of invoking the static method.
      * @throws ClassNotFoundException    If the class is not found.
@@ -123,7 +119,7 @@ public class DependencyLoader {
      * @throws InvocationTargetException If the method throws an exception.
      * @throws IllegalAccessException    If access to the method is denied.
      */
-    public Object runStaticMethod(String className, String methodName, Class<?> returnType, Object... args)
+    public Object runStaticMethod(String className, String methodName, Object... args)
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Class<?> targetClass = classLoader.loadClass(className);
 
@@ -136,10 +132,19 @@ public class DependencyLoader {
 
         Object result = method.invoke(null, args);
 
-        if (returnType.equals(Void.TYPE)) {
+        if (method.getReturnType().equals(Void.TYPE)) {
             return null;
         }
 
-        return returnType.cast(result);
+        return method.getReturnType().cast(result);
+    }
+
+    /**
+     * Returns the underlying URLClassLoader instance.
+     *
+     * @return The underlying URLClassLoader.
+     */
+    public URLClassLoader getClassLoader() {
+        return classLoader;
     }
 }
