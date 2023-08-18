@@ -3,10 +3,11 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("maven-publish")
     id("signing")
+    `java-library`
 }
 
 group = "com.alazeprt"
-version = "1.2"
+version = "1.2.1"
 description = "Quickly and easily import dependencies locally"
 
 repositories {
@@ -14,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.maven:maven-model:3.9.4")
+    api("org.apache.maven:maven-model:3.9.4")
 }
 
 java {

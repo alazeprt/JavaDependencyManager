@@ -81,7 +81,7 @@ public class Dependency {
         return centralUrl + packageUrl + "/" + strings[1] + "/" + strings[2];
     }
 
-    private List<Dependency> getSubDependencies(List<Dependency> list) throws IOException, XmlPullParserException {
+    private List<Dependency> getSubDependencies(List<Dependency> list) throws IOException {
         List<Dependency> dependencies = new ArrayList<>();
         for (Dependency dependency : list) {
             if(dependency.getDependency().split(":")[1].equals("junit") || dependency.getDependency().split(":")[1].equals("junit-jupiter-api")) {
@@ -91,7 +91,12 @@ public class Dependency {
             HttpURLConnection connection = (HttpURLConnection) pomUrl.openConnection();
             InputStream in = connection.getInputStream();
             MavenXpp3Reader reader = new MavenXpp3Reader();
-            Model model = reader.read(in);
+            Model model;
+            try {
+                model = reader.read(in);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             in.close();
             connection.disconnect();
 

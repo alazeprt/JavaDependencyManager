@@ -128,7 +128,11 @@ public class DependencyLoader {
             parameterTypes[i] = args[i].getClass();
         }
 
-        Method method = targetClass.getMethod(methodName, parameterTypes);
+        Method method = getConfirmMethod(targetClass, methodName, args);
+
+        if(method == null) {
+            return null;
+        }
 
         Object result = method.invoke(null, args);
 
@@ -146,5 +150,26 @@ public class DependencyLoader {
      */
     public URLClassLoader getClassLoader() {
         return classLoader;
+    }
+
+    static Method getConfirmMethod(Class<?> targetClass, String methodName, Object... args) {
+        Method[] methods = targetClass.getDeclaredMethods();
+        for(Method method : methods) {
+            if(!method.getName().equals(methodName) || args.length != method.getParameterCount()) {
+                continue;
+            }
+            Class<?>[] classes = method.getParameterTypes();
+            boolean isMethod = true;
+            for(int i = 0; i < args.length; i++) {
+                if(!classes[i].isInstance(args[i])) {
+                    isMethod = false;
+                    break;
+                }
+            }
+            if(isMethod) {
+                return method;
+            }
+        }
+        return null;
     }
 }

@@ -35,7 +35,10 @@ public class DependencyClass {
         for (int i = 0; i < args.length; i++) {
             parameterTypes[i] = args[i].getClass();
         }
-        Method method = targetClass.getMethod(methodName, parameterTypes);
+        Method method = DependencyLoader.getConfirmMethod(targetClass, methodName, args);
+        if(method == null) {
+            return null;
+        }
         Object result = method.invoke(object, args);
         if (method.getReturnType().equals(Void.TYPE)) {
             return null;
@@ -65,7 +68,11 @@ public class DependencyClass {
             parameterTypes[i] = args[i].getClass();
         }
 
-        Method method = targetClass.getMethod(methodName, parameterTypes);
+        Method method = DependencyLoader.getConfirmMethod(targetClass, methodName, args);
+
+        if(method == null) {
+            return null;
+        }
 
         Object result = method.invoke(null, args);
 
@@ -96,7 +103,11 @@ public class DependencyClass {
             parameterTypes[i] = args[i].getClass();
         }
 
-        Method method = targetClass.getMethod(methodName, parameterTypes);
+        Method method = DependencyLoader.getConfirmMethod(targetClass, methodName, args);
+
+        if(method == null) {
+            return null;
+        }
 
         Object result = method.invoke(null, args);
 
@@ -105,5 +116,14 @@ public class DependencyClass {
         }
 
         return method.getReturnType().cast(result);
+    }
+
+    /**
+     * Retrieves the object stored in the class.
+     *
+     * @return the object stored in the class
+     */
+    public Object getObject() {
+        return object;
     }
 }
