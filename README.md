@@ -45,10 +45,10 @@ import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1"); // 最快捷的定义方式
-        Dependency dependency1 = new Dependency("com.google.code.gson", "gson", "2.10.1"); // 这样也可以
-        List<Dependency> list = dependency.getSubDependencies(); // 遍历所有此依赖项的子依赖
-        DependencyDownloader.downloadAll(list, "./libs", 8); // 下载所有依赖到./libs文件夹, 每个依赖使用8线程下载
+        Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1"); // The quickest way to define
+        Dependency dependency1 = new Dependency("com.google.code.gson", "gson", "2.10.1"); // This approach works as well
+        List<Dependency> list = dependency.getSubDependencies(); // Traverse all sub-dependencies of this dependency
+        DependencyDownloader.downloadAll(list, "./libs", 8); // Download all dependencies to the ./libs folder, using 8 threads per dependency
     }
 }
 ```
@@ -96,16 +96,16 @@ public class Test {
         Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1");
         List<Dependency> list = dependency.getSubDependencies();
         DependencyDownloader.downloadAll(list, "./libs", 8);
-        DependencyLoader loader = new DependencyLoader("./libs/", list); // 加载libs文件夹中的所有依赖
-        DependencyClass gson = loader.construct("com.google.gson.Gson"); // 声明一个Gson类型变量
-        Map<String, String> map = new HashMap<>(); // 声明一个HashMap, 存Json数据
+        DependencyLoader loader = new DependencyLoader("./libs/", list); // Load all dependencies in the libs folder
+        DependencyClass gson = loader.construct("com.google.gson.Gson"); // Declare a variable of type Gson
+        Map<String, String> map = new HashMap<>(); // Declare a HashMap to store JSON data
         map.put("gson", "2.10.1");
         map.put("JavaDependencyManager", "1.2");
         map.put("log4j-core", "2.20.0");
-        // 声明一个JsonObject类型变量，赋值为解析后的HashMap数据
+        // Declare a variable of type JsonObject and assign it the parsed HashMap data
         DependencyClass jsonObject = new DependencyClass(gson.runMethod("fromJson", gson.runMethod("toJson", map), loader.getLocalClass("com.google.gson.JsonObject")));
-        System.out.println(jsonObject.runMethod("get", "gson").toString()); // 调用方法
-        System.out.println(gson.runMethod("toJson", jsonObject.getObject()).toString()); // 同上
+        System.out.println(jsonObject.runMethod("get", "gson").toString()); // Call the method
+        System.out.println(gson.runMethod("toJson", jsonObject.getObject()).toString()); // Same as above
     }
 }
 ```
@@ -140,7 +140,7 @@ public class Test_Log4j2 {
         Dependency dependency = new Dependency("org.apache.logging.log4j:log4j-core:2.20.0");
         List<Dependency> list = dependency.getSubDependencies();
         DependencyDownloader.downloadAll(list, "./libs", 8);
-        DependencyLoader loader = new DependencyLoader("./libs/", list); // 加载libs文件夹中的所有依赖
+        DependencyLoader loader = new DependencyLoader("./libs/", list);
         DependencyClass logger = new DependencyClass(loader.runStaticMethod("org.apache.logging.log4j.LogManager", "getLogger", Test.class));
         logger.runMethod("info", "Hello World!");
     }
