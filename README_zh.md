@@ -1,13 +1,13 @@
 # JavaDependencyManager
 ##### [English](./README.md) | [简体中文](./README_zh.md)
 
-### About
+### 关于
 
-JavaDependencyManager is a library created by alazeprt that provides various functionalities related to dependencies. This library encapsulates complex dependency-related operations within multiple classes, making it easy for users to call these classes to utilize dependencies without the need for intricate procedures.
+JavaDependencyManager是由alazeprt创作的一个提供了许多有关依赖的功能的库，这个库将繁琐的有关依赖的功能包装在多个类中，使用户可以轻松地调用这些库来使用依赖，不需要那么多繁琐的操作。
 
 ### 导入
 
-JavaDependencyManager has been published to Maven Central. You can check the import methods for it [here](https://mvnrepository.com/artifact/com.alazeprt/JavaDependencyManager). Below are some common import methods.
+JavaDependencyManager已经发布到了Maven中心，你可以在[这里](https://mvnrepository.com/artifact/com.alazeprt/JavaDependencyManager)查看关于它的导入方式，下面列举了一些常见的导入方式。
 
 ##### Maven:
 ```xml
@@ -32,13 +32,13 @@ dependencies {
 }
 ```
 
-### Usage
+### 使用方法
 
-#### Download Dependencies
+#### 下载依赖
 
-To download dependencies, we first need to declare a `Dependency` variable. The format for declaring required parameters is `groupId:artifactId:version`. Alternatively, you can extract these three values and pass them as separate parameters. After declaration, use the `getSubDependencies()` method to retrieve all sub-dependencies of this dependency and store them in a list. Then, use the `downloadAll()` method of the `DependencyDownloader` class to download all dependencies. The three parameters of this method represent the dependencies to be downloaded, the export path after downloading, and the number of threads for downloading each dependency.
+如果要下载依赖，我们首先要声明一个`Dependency`变量，声明所需的参数的格式为`groupId:artifactId:version`，也可以将3个值提取出来分别作为参数传递，声明好之后使用`getSubDependencies()`方法来获取这个依赖下所有的子依赖，将其保存到一个列表中，接着使用`DependencyDownloader`类的`downloadAll()`方法来下载所有依赖，这个方法的三个参数分别代表要下载的所有依赖、下载后导出的路径以及每个依赖下载的线程数。
 
-For example, to download the version 2.10.1 of the Gson dependency, you can use the following code:
+例如，我们需要下载gson依赖的2.10.1版本，可以使用以下代码：
 
 ```java
 import java.util.List;
@@ -53,15 +53,15 @@ public class Test {
 }
 ```
 
-#### Using Dependencies
+#### 使用依赖
 
-##### Constructing External Variables & Methods using External Variables
+##### 构造外部变量 & 使用外部变量的方法
 
-After downloading the dependencies, we can import and use them.
+在下载完依赖之后，我们就可以引入这个依赖并使用了。
 
-First, we define a `DependencyLoader` variable, which can be used to invoke classes. When defining the variable, you need to pass two parameters: the folder path where the dependencies are located and all required dependencies.
+首先，我们定义一个`DependencyLoader`变量，通过这个变量可以调用类，在定义变量的时候需要传入两个参数，分别是依赖所在的文件夹路径以及所有所需的依赖。
 
-For example, if we want to use the Gson library to run the following code:
+例如，我们想使用Gson库运行下面这段代码：
 
 ```java
 import com.google.gson.Gson;
@@ -84,7 +84,7 @@ public class Test {
 }
 ```
 
-We can transform the code to:
+我们可以将代码转换为：
 
 ```java
 import java.util.HashMap;
@@ -110,13 +110,13 @@ public class Test {
 }
 ```
 
-Here, we can use the `construct()` method of the `DependencyLoader` class to invoke the constructor of a class. In the code, we use `loader.construct("com.google.gson.Gson")` to call the constructor of the `Gson` class. This `construct()` method returns a variable of type `DependencyClass`, representing the constructed class.
+其中我们可以使用这个`DependencyLoader`类的`construct()`方法来调用这个类的构造方法，代码中通过`loader.construct("com.google.gson.Gson")`来调用Gson类的构造方法，这个`construct()`方法会返回一个DependencyClass类型的变量，表示构造的类。
 
-Next, if we want to call a method of a class, we can use the `runMethod()` method of the `DependencyClass` class. The first parameter is the name of the method to be called, and the subsequent parameters are the arguments required for this method. (Note: The `runMethod()` method cannot be used to call static methods. For calling static methods, see below. The consequences of using `runMethod()` to call static methods are not the responsibility of the original author.)
+接着如果我们要调用某个类的方法，可以使用`DependencyClass`类的`runMethod()`方法来调用，其中第一个参数为需要调用的方法名，后面的参数为调用此方法所需的参数。（注意：`runMethod()`方法不能用于调用静态方法，如果需要调用静态方法见下文，使用`runMethod()`来调用静态方法的后果本作者不承担）
 
-##### Using Static Methods
+##### 使用静态方法
 
-For instance, if we want to use the log4j library to log information, the original code might look like this:
+例如，我们想使用log4j库来记录日志，原来的代码是这样的：
 
 ```java
 import org.apache.logging.log4j.LogManager;
@@ -130,7 +130,7 @@ public class Test_Log4j2 {
 }
 ```
 
-We can transform the code to:
+我们可以将代码转换为：
 
 ```java
 import java.util.List;
@@ -147,16 +147,16 @@ public class Test_Log4j2 {
 }
 ```
 
-Here, we can use the `runStaticMethod()` method of the `DependencyLoader` class to call a static method. The first parameter is the class where the static method is located, the second parameter is the method name, and the following parameters are the required arguments for the method.
+其中，我们可以使用`DependencyLoader`类中的`runStaticMethod()`方法来调用一个静态方法，其中第一个参数为此静态方法所在的类，第二个参数为方法名，后面的参数均为调用此方法所需的参数。
 
 #### JavaDoc
 
-You can find the JavaDoc for this project [here](https://docs.alazeprt.com/).
+你可以在[这里](https://docs.alazeprt.com/)查看此项目的JavaDoc。
 
-### Issue Tracking
+### 问题追踪
 
-If you have questions, ideas, or you discover any bugs, you can submit them [here](https://github.com/alazeprt/JavaDependencyManager/issues).
+如果你有什么问题、想法或发现了什么bug，你可以到[这里](https://github.com/alazeprt/JavaDependencyManager/issues)提交。
 
-### License
+### 协议
 
-This project uses the GPL-3.0 license.
+本项目使用了GPL-3.0协议。
