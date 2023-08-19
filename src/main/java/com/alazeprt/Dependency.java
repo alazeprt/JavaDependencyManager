@@ -105,32 +105,14 @@ public class Dependency {
             } else {
                 List<Dependency> subDependencies = new ArrayList<>();
                 for (org.apache.maven.model.Dependency mavenDependency : model.getDependencies()) {
-                    if(mavenDependency.getArtifactId().equals("junit") || mavenDependency.getArtifactId().equals("junit-jupiter-api")) {
+                    if(mavenDependency.getScope() != null && mavenDependency.getScope().equals("test")) {
                         continue;
                     }
-                    Dependency subDependency;
                     List<Dependency> list1 = new ArrayList<>();
                     list1.addAll(subDependencies);
                     list1.addAll(dependencies);
                     list1.addAll(list);
-                    if(mavenDependency.getVersion() == null || mavenDependency.getVersion().startsWith("${")) {
-                        if(mavenDependency.getGroupId().startsWith("${")) {
-                            String version = getSameVersion(list1, mavenDependency.getArtifactId(), mavenDependency.getArtifactId());
-                            subDependency = new Dependency(mavenDependency.getArtifactId(), mavenDependency.getArtifactId(), version);
-                        } else {
-                            String version = getSameVersion(list1, mavenDependency.getGroupId(), mavenDependency.getArtifactId());
-                            subDependency = new Dependency(mavenDependency.getGroupId(), mavenDependency.getArtifactId(), version);
-                        }
-                    } else {
-                        if(mavenDependency.getGroupId().startsWith("${")) {
-                            String version = getSameVersion(list1, mavenDependency.getArtifactId(), mavenDependency.getArtifactId());
-                            subDependency = new Dependency(mavenDependency.getArtifactId(), mavenDependency.getArtifactId(), version);
-                        } else {
-                            String version = getSameVersion(list1, mavenDependency.getGroupId(), mavenDependency.getArtifactId());
-                            subDependency = new Dependency(mavenDependency.getGroupId(), mavenDependency.getArtifactId(), version);
-                        }
-                    }
-                    subDependencies.add(subDependency);
+                    subDependencies.add(getDependencyInfo(mavenDependency, list1));
                 }
                 dependencies.addAll(subDependencies);
             }
@@ -150,6 +132,26 @@ public class Dependency {
         List<Dependency> list = new ArrayList<>();
         list.add(this);
         return getSubDependencies(list);
+    }
+
+    private Dependency getDependencyInfo(org.apache.maven.model.Dependency mavenDependency, List<Dependency> list1) throws IOException {
+        if(mavenDependency.getVersion() == null || mavenDependency.getVersion().startsWith("${")) {
+            if(mavenDependency.getGroupId().startsWith("${")) {
+                String version = getSameVersion(list1, mavenDependency.getArtifactId(), mavenDependency.getArtifactId());
+                return new Dependency(mavenDependency.getArtifactId(), mavenDependency.getArtifactId(), version);
+            } else {
+                String version = getSameVersion(list1, mavenDependency.getGroupId(), mavenDependency.getArtifactId());
+                return new Dependency(mavenDependency.getGroupId(), mavenDependency.getArtifactId(), version);
+            }
+        } else {
+            if(mavenDependency.getGroupId().startsWith("${")) {
+                String version = getSameVersion(list1, mavenDependency.getArtifactId(), mavenDependency.getArtifactId());
+                return new Dependency(mavenDependency.getArtifactId(), mavenDependency.getArtifactId(), version);
+            } else {
+                String version = getSameVersion(list1, mavenDependency.getGroupId(), mavenDependency.getArtifactId());
+                return new Dependency(mavenDependency.getGroupId(), mavenDependency.getArtifactId(), version);
+            }
+        }
     }
 
     private String getSameVersion(List<Dependency> subDependencies, String groupId, String artifactId) throws IOException {
