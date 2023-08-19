@@ -14,21 +14,21 @@ JavaDependencyManager has been published to Maven Central. You can check the imp
 <dependency>
     <groupId>com.alazeprt</groupId>
     <artifactId>JavaDependencyManager</artifactId>
-    <version>1.2</version>
+    <version>1.2.2</version>
 </dependency>
 ```
 
 ##### Gradle (Groovy) :
 ```groovy
 dependencies {
-    implementation 'com.alazeprt:JavaDependencyManager:1.2'
+    implementation 'com.alazeprt:JavaDependencyManager:1.2.2'
 }
 ```
 
 ##### Gradle (Kotlin) :
 ```kotlin
 dependencies {
-    implementation("com.alazeprt:JavaDependencyManager:1.2")
+    implementation("com.alazeprt:JavaDependencyManager:1.2.2")
 }
 ```
 
