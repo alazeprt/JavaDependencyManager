@@ -1,11 +1,11 @@
 # JavaDependencyManager
-##### [English](./README.md) | [简体中文](./README_zh.md)
+##### English | [简体中文](./README_zh.md)
 
 ### About
 
 JavaDependencyManager is a library created by alazeprt that provides various functionalities related to dependencies. This library encapsulates complex dependency-related operations within multiple classes, making it easy for users to call these classes to utilize dependencies without the need for intricate procedures.
 
-### 导入
+### Import
 
 JavaDependencyManager has been published to Maven Central. You can check the import methods for it [here](https://mvnrepository.com/artifact/com.alazeprt/JavaDependencyManager). Below are some common import methods.
 
