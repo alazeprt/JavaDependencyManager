@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.alazeprt"
-version = "1.2.1"
+version = "1.2.2"
 description = "Quickly and easily import dependencies locally"
 
 repositories {

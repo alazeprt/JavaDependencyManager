@@ -47,3 +47,4 @@ bin/
 /gradle.properties
 /src/main/resources/
 /logs/
+/libs/

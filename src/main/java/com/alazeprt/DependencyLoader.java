@@ -153,7 +153,7 @@ public class DependencyLoader {
     }
 
     static Method getConfirmMethod(Class<?> targetClass, String methodName, Object... args) {
-        Method[] methods = targetClass.getDeclaredMethods();
+        Method[] methods = targetClass.getMethods();
         for(Method method : methods) {
             if(!method.getName().equals(methodName) || args.length != method.getParameterCount()) {
                 continue;
