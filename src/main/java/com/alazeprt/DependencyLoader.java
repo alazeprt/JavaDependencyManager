@@ -162,7 +162,7 @@ public class DependencyLoader {
         primitiveToWrapperMap.put(double.class, Double.class);
     }
 
-    public static Method getConfirmMethod(Class<?> targetClass, String methodName, Object... args) {
+    static Method getConfirmMethod(Class<?> targetClass, String methodName, Object... args) {
         Method[] methods = targetClass.getMethods();
         for (Method method : methods) {
             if (!method.getName().equals(methodName) || args.length != method.getParameterCount()) {

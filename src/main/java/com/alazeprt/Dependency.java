@@ -12,8 +12,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The top-level abstract class of dependencies
+ *
+ * @author alazeprt
+ */
 public abstract class Dependency {
     private final String dependency;
+
+    /**
+     * Initializes a dependency.
+     *
+     * @param dependency Shortening name of the dependency
+     */
     public Dependency(String dependency) {
         this.dependency = dependency;
     }
@@ -163,8 +174,18 @@ public abstract class Dependency {
         }
     }
 
+    /**
+     * Is this class a class that needs to be downloaded externally
+     *
+     * @return Whether it is an external dependency class
+     */
     public abstract boolean isExternal();
 
+    /**
+     * Gets the shortening name of the dependency.
+     *
+     * @return Dependency shortening name
+     */
     public String getDependency() {
         return dependency;
     }
