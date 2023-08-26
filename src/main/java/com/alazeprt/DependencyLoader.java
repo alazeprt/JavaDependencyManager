@@ -7,7 +7,9 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for loading classes, constructing objects, and invoking methods with external dependencies.
@@ -30,7 +32,11 @@ public class DependencyLoader {
         }
         URL[] urls = new URL[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            urls[i] = new File(libPath + list.get(i).getDependency().split(":")[1] + "-" + list.get(i).getDependency().split(":")[2] + ".jar").toURI().toURL();
+            if(list.get(i).isExternal()) {
+                urls[i] = new File(libPath + list.get(i).getDependency().split(":")[1] + "-" + list.get(i).getDependency().split(":")[2] + ".jar").toURI().toURL();
+            } else {
+                urls[i] = new URL(list.get(i).getDependency());
+            }
         }
         this.classLoader = new URLClassLoader(urls);
     }
@@ -88,11 +94,7 @@ public class DependencyLoader {
      */
     public DependencyClass construct(String className, Object... args) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<?> targetClass = classLoader.loadClass(className);
-        Class<?>[] parameterTypes = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
-        Constructor<?> constructor = targetClass.getConstructor(parameterTypes);
+        Constructor<?> constructor = getCompatibleConstructor(targetClass, args);
         return new DependencyClass(constructor.newInstance(args));
     }
 
@@ -123,11 +125,6 @@ public class DependencyLoader {
             throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Class<?> targetClass = classLoader.loadClass(className);
 
-        Class<?>[] parameterTypes = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
-
         Method method = getConfirmMethod(targetClass, methodName, args);
 
         if(method == null) {
@@ -152,22 +149,71 @@ public class DependencyLoader {
         return classLoader;
     }
 
-    static Method getConfirmMethod(Class<?> targetClass, String methodName, Object... args) {
+    private static final Map<Class<?>, Class<?>> primitiveToWrapperMap = new HashMap<>();
+
+    static {
+        primitiveToWrapperMap.put(boolean.class, Boolean.class);
+        primitiveToWrapperMap.put(byte.class, Byte.class);
+        primitiveToWrapperMap.put(short.class, Short.class);
+        primitiveToWrapperMap.put(char.class, Character.class);
+        primitiveToWrapperMap.put(int.class, Integer.class);
+        primitiveToWrapperMap.put(long.class, Long.class);
+        primitiveToWrapperMap.put(float.class, Float.class);
+        primitiveToWrapperMap.put(double.class, Double.class);
+    }
+
+    public static Method getConfirmMethod(Class<?> targetClass, String methodName, Object... args) {
         Method[] methods = targetClass.getMethods();
-        for(Method method : methods) {
-            if(!method.getName().equals(methodName) || args.length != method.getParameterCount()) {
+        for (Method method : methods) {
+            if (!method.getName().equals(methodName) || args.length != method.getParameterCount()) {
                 continue;
             }
             Class<?>[] classes = method.getParameterTypes();
             boolean isMethod = true;
-            for(int i = 0; i < args.length; i++) {
-                if(!classes[i].isInstance(args[i])) {
+            for (int i = 0; i < args.length; i++) {
+                if(args[i].getClass().equals(DependencyClass.class)) {
+                    args[i] = ((DependencyClass) args[i]).getObject();
+                }
+                if (!isParameterCompatible(classes[i], args[i])) {
                     isMethod = false;
                     break;
                 }
             }
-            if(isMethod) {
+            if (isMethod) {
                 return method;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isParameterCompatible(Class<?> parameterType, Object arg) {
+        if (parameterType.isPrimitive()) {
+            Class<?> wrapperType = primitiveToWrapperMap.get(parameterType);
+            if(wrapperType == null) {
+                wrapperType = parameterType;
+            }
+            return wrapperType.isInstance(arg);
+        } else {
+            return parameterType.isInstance(arg);
+        }
+    }
+
+    static Constructor<?> getCompatibleConstructor(Class<?> targetClass, Object... args) {
+        Constructor<?>[] constructors = targetClass.getConstructors();
+        for (Constructor<?> constructor : constructors) {
+            if (constructor.getParameterCount() != args.length) {
+                continue;
+            }
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+            boolean isCompatible = true;
+            for (int i = 0; i < args.length; i++) {
+                if (!isParameterCompatible(parameterTypes[i], args[i])) {
+                    isCompatible = false;
+                    break;
+                }
+            }
+            if (isCompatible) {
+                return constructor;
             }
         }
         return null;

@@ -32,10 +32,13 @@ public class DependencyDownloader {
             outputFolder += "/";
         }
         for(Dependency dependency : list) {
+            if(!dependency.isExternal()) {
+                continue;
+            }
             if(new File(outputFolder + dependency.getDependency().split(":")[1] + "-" + dependency.getDependency().split(":")[2] + ".jar").exists()) {
                 continue;
             }
-            String fileUrl = dependency.parseDependency();
+            String fileUrl = ((ExternalDependency) dependency).parseDependency();
             fileUrl += "/" + dependency.getDependency().split(":")[1] + "-" + dependency.getDependency().split(":")[2] + ".jar";
             System.out.println("Downloading " + dependency.getDependency().split(":")[1] + "-" + dependency.getDependency().split(":")[2] + ".jar");
             downloadFiles(fileUrl, outputFolder + dependency.getDependency().split(":")[1] + "-" + dependency.getDependency().split(":")[2] + ".jar", threads);
@@ -76,23 +79,21 @@ public class DependencyDownloader {
     }
 
 
-
     /**
-     * A class representing a thread for multi-threaded downloading.
+     * A class representing a thread for multithreaded downloading.
      */
     private static class DownloadThread implements Runnable {
         private final String fileUrl;
         private final int startByte;
         private final int endByte;
         private final String outputFilePath;
-
-        private DownloadThread(String fileUrl, int startByte, int endByte, String outputFilePath) {
+        public DownloadThread(String fileUrl, int startByte, int endByte,
+                              String outputFilePath) {
             this.fileUrl = fileUrl;
             this.startByte = startByte;
             this.endByte = endByte;
             this.outputFilePath = outputFilePath;
         }
-
         @Override
         public void run() {
             try {

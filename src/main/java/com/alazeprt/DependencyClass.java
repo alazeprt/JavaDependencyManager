@@ -25,16 +25,11 @@ public class DependencyClass {
      * @param methodName The name of the method to invoke.
      * @param args       The arguments to pass to the method.
      * @return The result of invoking the method.
-     * @throws NoSuchMethodException     If the method with the specified name and parameter types is not found.
      * @throws InvocationTargetException If the method throws an exception.
      * @throws IllegalAccessException    If access to the method is denied.
      */
-    public Object runMethod(String methodName, Object... args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public Object runMethod(String methodName, Object... args) throws InvocationTargetException, IllegalAccessException {
         Class<?> targetClass = object.getClass();
-        Class<?>[] parameterTypes = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
         Method method = DependencyLoader.getConfirmMethod(targetClass, methodName, args);
         if(method == null) {
             return null;
@@ -55,18 +50,12 @@ public class DependencyClass {
      * @param args       The arguments to pass to the method.
      * @return The result of invoking the static method.
      * @throws ClassNotFoundException    If the class is not found.
-     * @throws NoSuchMethodException     If the method with the specified name and parameter types is not found.
      * @throws InvocationTargetException If the method throws an exception.
      * @throws IllegalAccessException    If access to the method is denied.
      */
     public static Object runStaticMethod(DependencyLoader loader, String className, String methodName, Object... args)
-            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws ClassNotFoundException, InvocationTargetException, IllegalAccessException {
         Class<?> targetClass = loader.getClassLoader().loadClass(className);
-
-        Class<?>[] parameterTypes = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
 
         Method method = DependencyLoader.getConfirmMethod(targetClass, methodName, args);
 
@@ -89,19 +78,12 @@ public class DependencyClass {
      * @param methodName The name of the static method to invoke.
      * @param args       The arguments to pass to the method.
      * @return The result of invoking the static method.
-     * @throws ClassNotFoundException    If the class is not found.
-     * @throws NoSuchMethodException     If the method with the specified name and parameter types is not found.
      * @throws InvocationTargetException If the method throws an exception.
      * @throws IllegalAccessException    If access to the method is denied.
      */
     public Object runStaticMethod(String methodName, Object... args)
-            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws InvocationTargetException, IllegalAccessException {
         Class<?> targetClass = object.getClass();
-
-        Class<?>[] parameterTypes = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
-        }
 
         Method method = DependencyLoader.getConfirmMethod(targetClass, methodName, args);
 
