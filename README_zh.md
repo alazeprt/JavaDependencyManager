@@ -14,21 +14,21 @@ JavaDependencyManager已经发布到了Maven中心，你可以在[这里](https:
 <dependency>
     <groupId>com.alazeprt</groupId>
     <artifactId>JavaDependencyManager</artifactId>
-    <version>1.2.2</version>
+    <version>1.3-beta.1</version>
 </dependency>
 ```
 
 ##### Gradle (Groovy) :
 ```groovy
 dependencies {
-    implementation 'com.alazeprt:JavaDependencyManager:1.2.2'
+    implementation 'com.alazeprt:JavaDependencyManager:1.3-beta.1'
 }
 ```
 
 ##### Gradle (Kotlin) :
 ```kotlin
 dependencies {
-    implementation("com.alazeprt:JavaDependencyManager:1.2.2")
+    implementation("com.alazeprt:JavaDependencyManager:1.3-beta.1")
 }
 ```
 
@@ -36,7 +36,7 @@ dependencies {
 
 #### 下载依赖
 
-如果要下载依赖，我们首先要声明一个`Dependency`变量，声明所需的参数的格式为`groupId:artifactId:version`，也可以将3个值提取出来分别作为参数传递，声明好之后使用`getSubDependencies()`方法来获取这个依赖下所有的子依赖，将其保存到一个列表中，接着使用`DependencyDownloader`类的`downloadAll()`方法来下载所有依赖，这个方法的三个参数分别代表要下载的所有依赖、下载后导出的路径以及每个依赖下载的线程数。
+如果要下载依赖，我们首先要声明一个`ExternalDependency`变量，声明所需的参数的格式为`groupId:artifactId:version`，也可以将3个值提取出来分别作为参数传递，声明好之后使用`getSubDependencies()`方法来获取这个依赖下所有的子依赖，将其保存到一个列表中，接着使用`DependencyDownloader`类的`downloadAll()`方法来下载所有依赖，这个方法的三个参数分别代表要下载的所有依赖、下载后导出的路径以及每个依赖下载的线程数。
 
 例如，我们需要下载gson依赖的2.10.1版本，可以使用以下代码：
 
@@ -45,8 +45,8 @@ import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1"); // 最快捷的定义方式
-        Dependency dependency1 = new Dependency("com.google.code.gson", "gson", "2.10.1"); // 这样也可以
+        ExternalDependency dependency = new ExternalDependency("com.google.code.gson:gson:2.10.1"); // 最快捷的定义方式
+        ExternalDependency dependency1 = new ExternalDependency("com.google.code.gson", "gson", "2.10.1"); // 这样也可以
         List<Dependency> list = dependency.getSubDependencies(); // 遍历所有此依赖项的子依赖
         DependencyDownloader.downloadAll(list, "./libs", 8); // 下载所有依赖到./libs文件夹, 每个依赖使用8线程下载
     }
@@ -93,7 +93,7 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1");
+        ExternalDependency dependency = new ExternalDependency("com.google.code.gson:gson:2.10.1");
         List<Dependency> list = dependency.getSubDependencies();
         DependencyDownloader.downloadAll(list, "./libs", 8);
         DependencyLoader loader = new DependencyLoader("./libs/", list); // 加载libs文件夹中的所有依赖
@@ -137,7 +137,7 @@ import java.util.List;
 
 public class Test_Log4j2 {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("org.apache.logging.log4j:log4j-core:2.20.0");
+        ExternalDependency dependency = new ExternalDependency("org.apache.logging.log4j:log4j-core:2.20.0");
         List<Dependency> list = dependency.getSubDependencies();
         DependencyDownloader.downloadAll(list, "./libs", 8);
         DependencyLoader loader = new DependencyLoader("./libs/", list); // 加载libs文件夹中的所有依赖

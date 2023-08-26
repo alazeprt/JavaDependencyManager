@@ -14,21 +14,21 @@ JavaDependencyManager has been published to Maven Central. You can check the imp
 <dependency>
     <groupId>com.alazeprt</groupId>
     <artifactId>JavaDependencyManager</artifactId>
-    <version>1.2.2</version>
+    <version>1.3-beta.1</version>
 </dependency>
 ```
 
 ##### Gradle (Groovy) :
 ```groovy
 dependencies {
-    implementation 'com.alazeprt:JavaDependencyManager:1.2.2'
+    implementation 'com.alazeprt:JavaDependencyManager:1.3-beta.1'
 }
 ```
 
 ##### Gradle (Kotlin) :
 ```kotlin
 dependencies {
-    implementation("com.alazeprt:JavaDependencyManager:1.2.2")
+    implementation("com.alazeprt:JavaDependencyManager:1.3-beta.1")
 }
 ```
 
@@ -36,7 +36,7 @@ dependencies {
 
 #### Download Dependencies
 
-To download dependencies, we first need to declare a `Dependency` variable. The format for declaring required parameters is `groupId:artifactId:version`. Alternatively, you can extract these three values and pass them as separate parameters. After declaration, use the `getSubDependencies()` method to retrieve all sub-dependencies of this dependency and store them in a list. Then, use the `downloadAll()` method of the `DependencyDownloader` class to download all dependencies. The three parameters of this method represent the dependencies to be downloaded, the export path after downloading, and the number of threads for downloading each dependency.
+To download dependencies, we first need to declare a `ExternalDependency` variable. The format for declaring required parameters is `groupId:artifactId:version`. Alternatively, you can extract these three values and pass them as separate parameters. After declaration, use the `getSubDependencies()` method to retrieve all sub-dependencies of this dependency and store them in a list. Then, use the `downloadAll()` method of the `DependencyDownloader` class to download all dependencies. The three parameters of this method represent the dependencies to be downloaded, the export path after downloading, and the number of threads for downloading each dependency.
 
 For example, to download the version 2.10.1 of the Gson dependency, you can use the following code:
 
@@ -45,8 +45,8 @@ import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1"); // The quickest way to define
-        Dependency dependency1 = new Dependency("com.google.code.gson", "gson", "2.10.1"); // This approach works as well
+        ExternalDependency dependency = new ExternalDependency("com.google.code.gson:gson:2.10.1"); // The quickest way to define
+        ExternalDependency dependency1 = new ExternalDependency("com.google.code.gson", "gson", "2.10.1"); // This approach works as well
         List<Dependency> list = dependency.getSubDependencies(); // Traverse all sub-dependencies of this dependency
         DependencyDownloader.downloadAll(list, "./libs", 8); // Download all dependencies to the ./libs folder, using 8 threads per dependency
     }
@@ -93,7 +93,7 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("com.google.code.gson:gson:2.10.1");
+        ExternalDependency dependency = new ExternalDependency("com.google.code.gson:gson:2.10.1");
         List<Dependency> list = dependency.getSubDependencies();
         DependencyDownloader.downloadAll(list, "./libs", 8);
         DependencyLoader loader = new DependencyLoader("./libs/", list); // Load all dependencies in the libs folder
@@ -137,7 +137,7 @@ import java.util.List;
 
 public class Test_Log4j2 {
     public static void main(String[] args) throws Exception {
-        Dependency dependency = new Dependency("org.apache.logging.log4j:log4j-core:2.20.0");
+        ExternalDependency dependency = new ExternalDependency("org.apache.logging.log4j:log4j-core:2.20.0");
         List<Dependency> list = dependency.getSubDependencies();
         DependencyDownloader.downloadAll(list, "./libs", 8);
         DependencyLoader loader = new DependencyLoader("./libs/", list);
